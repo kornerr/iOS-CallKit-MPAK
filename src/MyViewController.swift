@@ -26,7 +26,7 @@ class MyViewController: UIViewController {
     view.addSubview(callButton)
     // Кнопка симуляции входящего звонка CallKit.
     incomingButton.frame = CGRect(x: 0, y: 400, width: b.width, height: 50)
-    incomingButton.setTitle("Симулировать входящий видеозвонок через пару секунд", for: .normal)
+    incomingButton.setTitle("Симулировать входящий видеозвонок через 2с", for: .normal)
     incomingButton.setTitleColor(.blue, for: .normal)
     incomingButton.addTarget(self, action: #selector(simulateIncomingCall), for: .touchUpInside)
     view.addSubview(incomingButton)
