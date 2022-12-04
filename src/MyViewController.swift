@@ -22,7 +22,7 @@ class MyViewController: UIViewController {
     callButton.frame = CGRect(x: b.width - 200, y: 300, width: 200, height: 50)
     callButton.setTitle("Начать видеозвонок", for: .normal)
     callButton.setTitleColor(.blue, for: .normal)
-    callButton.addTarget(self, action: #selector(startVideoCall), for: .touchUpInside)
+    callButton.addTarget(self, action: #selector(simulateOutgoingCall), for: .touchUpInside)
     view.addSubview(callButton)
     // Кнопка симуляции входящего звонка CallKit.
     incomingButton.frame = CGRect(x: 0, y: 400, width: b.width, height: 50)
@@ -35,6 +35,8 @@ class MyViewController: UIViewController {
   @objc func simulateIncomingCall(sender: UIButton) {
   }
 
-  @objc func startVideoCall(sender: UIButton) {
+  @objc func simulateOutgoingCall(sender: UIButton) {
+    guard let id = textField.text else { return }
+    vcs.startCall(callId: id, hasVideo: true)
   }
 }

@@ -1,13 +1,13 @@
 import UIKit
 
 class VideoCallSimulation: UILabel {
-  var callId: String? {
+  private(set) var callId: String? {
     didSet {
       refreshUI()
     }
   }
 
-  var hasVideo = false {
+  private(set) var hasVideo = false {
     didSet {
       refreshUI()
     }
@@ -26,6 +26,14 @@ class VideoCallSimulation: UILabel {
   
   @available(*, unavailable)
   required init?(coder: NSCoder) { return nil }
+
+  func startCall(
+    callId: String,
+    hasVideo: Bool
+  ) {
+    self.callId = callId
+    self.hasVideo = hasVideo
+  }
 
   private func refreshUI() {
     let callStatus = callId ?? "N/A"
