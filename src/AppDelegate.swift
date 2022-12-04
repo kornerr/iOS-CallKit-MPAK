@@ -15,9 +15,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
 }
-
-class MyViewController: UIViewController {
-  override func viewDidLoad() {
-    super.viewDidLoad()
-  }
-}
