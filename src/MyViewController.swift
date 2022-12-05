@@ -40,7 +40,7 @@ class MyViewController: UIViewController {
     // взял прямо с Kodeco такой ужасный пример обращения к UIApplication:
     // https://www.kodeco.com/1276414-callkit-tutorial-for-ios
     DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-      self?.ics.startCall(callId: id, hasVideo: false)
+      self?.ics.startCall(hasVideo: false)
       UIApplication.shared.endBackgroundTask(bgId)
     }
   }

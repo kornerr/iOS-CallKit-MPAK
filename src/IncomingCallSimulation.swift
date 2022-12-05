@@ -19,18 +19,16 @@ class IncomingCallSimulation: NSObject {
     /**/print("IncomingCS.init")
   }
 
-  func startCall(
-    callId: String,
-    hasVideo: Bool
-  ) {
+  func startCall(hasVideo: Bool) {
     let upd = CXCallUpdate()
-    upd.localizedCallerName = callId
-    upd.remoteHandle = CXHandle(type: .generic, value: "call-id")
+    upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
     upd.hasVideo = hasVideo
+    /*
     upd.supportsHolding = false
     upd.supportsGrouping = false
     upd.supportsUngrouping = false
     upd.supportsDTMF = false
+    */
 
     provider?.reportNewIncomingCall(with: UUID(), update: upd) { err in
       /**/print("IncomingCS.startC-2 err: '\(String(describing: err))'")
