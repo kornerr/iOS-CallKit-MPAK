@@ -2,6 +2,7 @@ import UIKit
 
 class MyViewController: UIViewController {
   private let callButton = UIButton()
+  private let ics = IncomingCallSimulation()
   private let incomingButton = UIButton()
   private let vcs = VideoCallSimulation()
   private let textField = UITextField()
@@ -15,11 +16,11 @@ class MyViewController: UIViewController {
     vcs.frame = CGRect(x: 0, y: 50, width: b.width, height: 200)
     view.addSubview(vcs)
     // Поле ввода номера.
-    textField.frame = CGRect(x: 0, y: 300, width: b.width - 200, height: 50)
+    textField.frame = CGRect(x: 0, y: 300, width: b.width, height: 50)
     textField.borderStyle = .roundedRect
     view.addSubview(textField)
     // Кнопка совершения звонка.
-    callButton.frame = CGRect(x: b.width - 200, y: 300, width: 200, height: 50)
+    callButton.frame = CGRect(x: 0, y: 350, width: b.width, height: 50)
     callButton.setTitle("Начать видеозвонок", for: .normal)
     callButton.setTitleColor(.blue, for: .normal)
     callButton.addTarget(self, action: #selector(simulateOutgoingCall), for: .touchUpInside)
@@ -33,6 +34,15 @@ class MyViewController: UIViewController {
   }
 
   @objc func simulateIncomingCall(sender: UIButton) {
+    guard let id = textField.text else { return }
+
+    let bgId = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+    // взял прямо с Kodeco такой ужасный пример обращения к UIApplication:
+    // https://www.kodeco.com/1276414-callkit-tutorial-for-ios
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+      self?.ics.startCall(callId: id, hasVideo: false)
+      UIApplication.shared.endBackgroundTask(bgId)
+    }
   }
 
   @objc func simulateOutgoingCall(sender: UIButton) {
