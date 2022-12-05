@@ -9,29 +9,20 @@ class IncomingCallSimulation: NSObject {
     super.init()
 
     let cfg = CXProviderConfiguration()
-    cfg.maximumCallGroups = 1
-    cfg.maximumCallsPerCallGroup = 1
     cfg.supportedHandleTypes = [.generic]
     cfg.supportsVideo = true
 
     provider = CXProvider(configuration: cfg)
     provider?.setDelegate(self, queue: DispatchQueue.main)
-    /**/print("IncomingCS.init")
   }
 
   func startCall(hasVideo: Bool) {
     let upd = CXCallUpdate()
     upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
     upd.hasVideo = hasVideo
-    /*
-    upd.supportsHolding = false
-    upd.supportsGrouping = false
-    upd.supportsUngrouping = false
-    upd.supportsDTMF = false
-    */
 
     provider?.reportNewIncomingCall(with: UUID(), update: upd) { err in
-      /**/print("IncomingCS.startC-2 err: '\(String(describing: err))'")
+      /**/print("IncomingCS.startC err: '\(String(describing: err))'")
     }
   }
 }
