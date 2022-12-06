@@ -7,12 +7,6 @@ class VideoCallSimulation: UILabel {
     }
   }
 
-  private(set) var hasVideo = false {
-    didSet {
-      refreshUI()
-    }
-  }
-
   override init(frame: CGRect) {
     super.init(frame: frame)
 
@@ -27,17 +21,12 @@ class VideoCallSimulation: UILabel {
   @available(*, unavailable)
   required init?(coder: NSCoder) { return nil }
 
-  func startCall(
-    callId: String,
-    hasVideo: Bool
-  ) {
+  func startCall(callId: String) {
     self.callId = callId
-    self.hasVideo = hasVideo
   }
 
   private func refreshUI() {
     let callStatus = callId ?? "N/A"
-    let videoStatus = hasVideo ? "Y" : "N"
-    text = "VideoCallSimulation\ncall: '\(callStatus)'\nvideo: '\(videoStatus)'"
+    text = "VideoCallSimulation: '\(callStatus)'"
   }
 }

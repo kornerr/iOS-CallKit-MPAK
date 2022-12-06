@@ -6,8 +6,9 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   private let incomingButton = UIButton()
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
-  private let textField = UITextField()
   private var provider: CXProvider?
+  private let textField = UITextField()
+  private var voipPushCallId: String?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -50,11 +51,12 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   @objc func simulateOutgoingCall(sender: UIButton) {
     guard let id = textField.text else { return }
-    vcs.startCall(callId: id, hasVideo: true)
+    vcs.startCall(callId: id)
   }
 
   func voipPushSimulationDidReceivePayload(_ payload: String) {
     guard let id = UUID(uuidString: payload) else { return }
+    voipPushCallId = payload
     let upd = CXCallUpdate()
     upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
     upd.hasVideo = false
@@ -69,8 +71,9 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   func provider(_: CXProvider, perform action: CXAnswerCallAction) {
     action.fulfill()
-    //accept.send()
     /**/print("MyVC.providerPAA")
+    guard let id = voipPushCallId else { return }
+    vcs.startCall(callId: id)
   }
 
   func provider(_: CXProvider, perform action: CXEndCallAction) {
