@@ -1,11 +1,13 @@
+import CallKit
 import UIKit
 
-class MyViewController: UIViewController {
+class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProviderDelegate {
   private let callButton = UIButton()
-  private let ics = IncomingCallSimulation()
   private let incomingButton = UIButton()
   private let vcs = VideoCallSimulation()
+  private let vps = VoIPPushSimulation()
   private let textField = UITextField()
+  private var provider: CXProvider?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -31,20 +33,48 @@ class MyViewController: UIViewController {
     incomingButton.setTitleColor(.blue, for: .normal)
     incomingButton.addTarget(self, action: #selector(simulateIncomingCall), for: .touchUpInside)
     view.addSubview(incomingButton)
+
+    // Настраиваем CallKit.
+    let cfg = CXProviderConfiguration()
+    cfg.supportedHandleTypes = [.generic]
+    cfg.supportsVideo = true
+    provider = CXProvider(configuration: cfg)
+    provider?.setDelegate(self, queue: DispatchQueue.main)
+    // Получаем пуши VoIP.
+    vps.delegate = self
   }
 
   @objc func simulateIncomingCall(sender: UIButton) {
-    let bgId = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-    // взял прямо с Kodeco такой ужасный пример обращения к UIApplication:
-    // https://www.kodeco.com/1276414-callkit-tutorial-for-ios
-    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-      self?.ics.startCall(hasVideo: false)
-      UIApplication.shared.endBackgroundTask(bgId)
-    }
+    vps.simulate(payload: UUID().uuidString, after: .seconds(3))
   }
 
   @objc func simulateOutgoingCall(sender: UIButton) {
     guard let id = textField.text else { return }
     vcs.startCall(callId: id, hasVideo: true)
+  }
+
+  func voipPushSimulationDidReceivePayload(_ payload: String) {
+    guard let id = UUID(uuidString: payload) else { return }
+    let upd = CXCallUpdate()
+    upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
+    upd.hasVideo = false
+    provider?.reportNewIncomingCall(with: id, update: upd) { err in
+      /**/print("MyVC.voipPSDRP err: '\(String(describing: err))'")
+    }
+  }
+
+  func providerDidReset(_: CXProvider) {
+    /**/print("MyVC.providerDR")
+  }
+
+  func provider(_: CXProvider, perform action: CXAnswerCallAction) {
+    action.fulfill()
+    //accept.send()
+    /**/print("MyVC.providerPAA")
+  }
+
+  func provider(_: CXProvider, perform action: CXEndCallAction) {
+    action.fulfill()
+    /**/print("MyVC.providerPAE")
   }
 }
