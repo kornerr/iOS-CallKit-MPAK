@@ -11,10 +11,7 @@ class VideoCallSimulation: UILabel {
     super.init(frame: frame)
 
     backgroundColor = .black
-    numberOfLines = 0
-    textAlignment = .center
     textColor = .white
-
     refreshUI()
   }
   
