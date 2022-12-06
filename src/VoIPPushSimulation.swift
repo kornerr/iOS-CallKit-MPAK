@@ -1,4 +1,4 @@
-/**/import UIKit
+import UIKit
 
 protocol VoIPPushSimulationDelegate {
   func voipPushSimulationDidReceivePayload(_ payload: String)
@@ -9,7 +9,7 @@ class VoIPPushSimulation {
 
   func simulate(payload: String, after delay: DispatchTimeInterval) {
     let bgId = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-    // взял прямо с Kodeco такой ужасный пример обращения к UIApplication:
+    // Прямо с Kodeco такой ужасный пример обращения к UIApplication:
     // https://www.kodeco.com/1276414-callkit-tutorial-for-ios
     DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
       self?.delegate?.voipPushSimulationDidReceivePayload(payload)

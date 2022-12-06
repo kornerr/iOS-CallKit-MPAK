@@ -18,16 +18,19 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     // Статус видеозвонка.
     vcs.frame = CGRect(x: 0, y: 50, width: b.width, height: 200)
     view.addSubview(vcs)
+
     // Поле ввода номера.
     textField.frame = CGRect(x: 0, y: 300, width: b.width, height: 50)
     textField.borderStyle = .roundedRect
     view.addSubview(textField)
+
     // Кнопка совершения звонка.
     callButton.frame = CGRect(x: 0, y: 350, width: b.width, height: 50)
     callButton.setTitle("Начать видеозвонок", for: .normal)
     callButton.setTitleColor(.blue, for: .normal)
     callButton.addTarget(self, action: #selector(simulateOutgoingCall), for: .touchUpInside)
     view.addSubview(callButton)
+
     // Кнопка симуляции входящего звонка CallKit.
     incomingButton.frame = CGRect(x: 0, y: 400, width: b.width, height: 50)
     incomingButton.setTitle("Симулировать входящий видеозвонок", for: .normal)
@@ -41,7 +44,8 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     cfg.supportsVideo = true
     provider = CXProvider(configuration: cfg)
     provider?.setDelegate(self, queue: DispatchQueue.main)
-    // Получаем пуши VoIP.
+
+    // Настраиваем получение пушей VoIP.
     vps.delegate = self
   }
 
@@ -60,24 +64,14 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     let upd = CXCallUpdate()
     upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
     upd.hasVideo = false
-    provider?.reportNewIncomingCall(with: id, update: upd) { err in
-      /**/print("MyVC.voipPSDRP err: '\(String(describing: err))'")
-    }
+    provider?.reportNewIncomingCall(with: id, update: upd) { _ in }
   }
 
-  func providerDidReset(_: CXProvider) {
-    /**/print("MyVC.providerDR")
-  }
+  func providerDidReset(_: CXProvider) { }
 
   func provider(_: CXProvider, perform action: CXAnswerCallAction) {
     action.fulfill()
-    /**/print("MyVC.providerPAA")
     guard let id = voipPushCallId else { return }
     vcs.startCall(callId: id)
-  }
-
-  func provider(_: CXProvider, perform action: CXEndCallAction) {
-    action.fulfill()
-    /**/print("MyVC.providerPAE")
   }
 }
