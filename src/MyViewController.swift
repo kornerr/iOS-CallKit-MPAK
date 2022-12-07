@@ -41,7 +41,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     // Настраиваем CallKit.
     let cfg = CXProviderConfiguration()
     cfg.supportedHandleTypes = [.generic]
-    cfg.supportsVideo = true
     provider = CXProvider(configuration: cfg)
     provider?.setDelegate(self, queue: DispatchQueue.main)
 
@@ -63,7 +62,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     voipPushCallId = payload
     let upd = CXCallUpdate()
     upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
-    upd.hasVideo = false
     provider?.reportNewIncomingCall(with: id, update: upd) { _ in }
   }
 
