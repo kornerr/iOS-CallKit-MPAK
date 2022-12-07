@@ -1,29 +1,23 @@
 import UIKit
 
 class VideoCallSimulation: UILabel {
-  private(set) var callId: String? {
-    didSet {
-      refreshUI()
-    }
-  }
-
   override init(frame: CGRect) {
     super.init(frame: frame)
 
     backgroundColor = .black
     textColor = .white
-    refreshUI()
+    refreshUI(nil)
   }
   
   @available(*, unavailable)
   required init?(coder: NSCoder) { return nil }
 
   func startCall(callId: String) {
-    self.callId = callId
+    refreshUI(callId)
   }
 
-  private func refreshUI() {
-    let callStatus = callId ?? "N/A"
-    text = "VideoCallSimulation: '\(callStatus)'"
+  private func refreshUI(_ callId: String?) {
+    let status = callId ?? "N/A"
+    text = "VideoCallSimulation status: '\(status)'"
   }
 }
