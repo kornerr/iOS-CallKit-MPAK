@@ -26,14 +26,14 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
     // Кнопка совершения звонка.
     callButton.frame = CGRect(x: 0, y: 350, width: b.width, height: 50)
-    callButton.setTitle("Начать видеозвонок", for: .normal)
+    callButton.setTitle("Начать звонок", for: .normal)
     callButton.setTitleColor(.blue, for: .normal)
     callButton.addTarget(self, action: #selector(simulateOutgoingCall), for: .touchUpInside)
     view.addSubview(callButton)
 
     // Кнопка симуляции входящего звонка CallKit.
     incomingButton.frame = CGRect(x: 0, y: 400, width: b.width, height: 50)
-    incomingButton.setTitle("Симулировать входящий видеозвонок", for: .normal)
+    incomingButton.setTitle("Симулировать входящий звонок", for: .normal)
     incomingButton.setTitleColor(.blue, for: .normal)
     incomingButton.addTarget(self, action: #selector(simulateIncomingCall), for: .touchUpInside)
     view.addSubview(incomingButton)
