@@ -7,7 +7,10 @@ protocol VoIPPushSimulationDelegate {
 class VoIPPushSimulation {
   var delegate: VoIPPushSimulationDelegate?
 
-  func simulate(payload: String, after delay: DispatchTimeInterval) {
+  func simulate(
+    payload: String,
+    after delay: DispatchTimeInterval
+  ) {
     let bgId = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
     // Прямо с Kodeco такой ужасный пример обращения к UIApplication:
     // https://www.kodeco.com/1276414-callkit-tutorial-for-ios
