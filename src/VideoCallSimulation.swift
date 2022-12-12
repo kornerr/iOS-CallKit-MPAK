@@ -4,7 +4,7 @@ class VideoCallSimulation: UILabel {
   override init(frame: CGRect) {
     super.init(frame: frame)
 
-    backgroundColor = .black
+    backgroundColor = .darkGray
     textColor = .white
     refreshUI(nil)
   }
