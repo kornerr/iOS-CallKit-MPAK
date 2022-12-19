@@ -4,6 +4,8 @@ import UIKit
 class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProviderDelegate {
   private let callButton = UIButton()
   private let incomingButton = UIButton()
+  private var makeUICall: ((String) -> Void)?
+  private var makeVoIPCall: ((String) -> Void)?
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
   private var provider: CXProvider?
@@ -46,6 +48,12 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
     // Настраиваем получение пушей VoIP.
     vps.delegate = self
+
+    // Совершаем звонок разными способами:
+    // 1. из UI
+    // 2. в ответ на VoIP push
+    makeUICall = { [weak self] id in self?.vcs.startCall(callId: id) }
+    makeVoIPCall = makeUICall
   }
 
   @objc func simulateIncomingCall(sender: UIButton) {
@@ -54,7 +62,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   @objc func simulateOutgoingCall(sender: UIButton) {
     guard let id = textField.text else { return }
-    vcs.startCall(callId: id)
+    makeUICall?(id)
   }
 
   func voipPushSimulationDidReceivePayload(_ payload: String) {
@@ -70,6 +78,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   func provider(_: CXProvider, perform action: CXAnswerCallAction) {
     action.fulfill()
     guard let id = voipPushCallId else { return }
-    vcs.startCall(callId: id)
+    makeVoIPCall?(id)
   }
 }
