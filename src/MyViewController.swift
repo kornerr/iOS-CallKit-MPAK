@@ -1,15 +1,17 @@
 import CallKit
+import Combine
 import UIKit
 
 class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProviderDelegate {
   private let callButton = UIButton()
   private let incomingButton = UIButton()
-  private var makeUICall: ((String) -> Void)?
-  private var makeVoIPCall: ((String) -> Void)?
+  private let makeUICall = PassthroughSubject<String, Never>()
+  private let makeVoIPCall = PassthroughSubject<String, Never>()
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
   private var provider: CXProvider?
   private let textField = UITextField()
+  private var subscriptions = [AnyCancellable]()
   private var voipPushCallId: String?
 
   override func viewDidLoad() {
@@ -52,8 +54,9 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     // Совершаем звонок разными способами:
     // 1. из UI
     // 2. в ответ на VoIP push
-    makeUICall = { [weak self] id in self?.vcs.startCall(callId: id) }
-    makeVoIPCall = makeUICall
+    Publishers.Merge(makeUICall, makeVoIPCall)
+      .sink { [weak self] id in self?.vcs.startCall(callId: id) }
+      .store(in: &subscriptions)
   }
 
   @objc func simulateIncomingCall(sender: UIButton) {
@@ -62,7 +65,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   @objc func simulateOutgoingCall(sender: UIButton) {
     guard let id = textField.text else { return }
-    makeUICall?(id)
+    makeUICall.send(id)
   }
 
   func voipPushSimulationDidReceivePayload(_ payload: String) {
@@ -78,6 +81,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   func provider(_: CXProvider, perform action: CXAnswerCallAction) {
     action.fulfill()
     guard let id = voipPushCallId else { return }
-    makeVoIPCall?(id)
+    makeVoIPCall.send(id)
   }
 }
