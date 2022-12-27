@@ -77,7 +77,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   func voipPushSimulationDidReceivePayload(_ payload: String) {
     guard let id = UUID(uuidString: payload) else { return }
-    voipPushCallId.send(id)
+    voipPushCallId.send(payload)
     let upd = CXCallUpdate()
     upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
     provider?.reportNewIncomingCall(with: id, update: upd) { _ in }
