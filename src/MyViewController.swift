@@ -6,13 +6,13 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   private let callButton = UIButton()
   private let incomingButton = UIButton()
   private let makeUICall = PassthroughSubject<String, Never>()
-  private let makeVoIPCall = PassthroughSubject<String, Never>()
+  private let makeVoIPCall = PassthroughSubject<Void, Never>()
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
   private var provider: CXProvider?
   private let textField = UITextField()
   private var subscriptions = [AnyCancellable]()
-  private var voipPushCallId: String?
+  private var voipPushCallId = PassthroughSubject<String, Never>()
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -52,9 +52,16 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     vps.delegate = self
 
     // Совершаем звонок разными способами:
-    // 1. из UI
-    // 2. в ответ на VoIP push
-    Publishers.Merge(makeUICall, makeVoIPCall)
+    // 1. из UI после нажатия на кнопку «Начать звонок»
+    // 2. в ответ на VoIP push после нажатия на кнопку «✅» в CallKit
+    Publishers.Merge(
+      makeUICall,
+      Publishers.CombineLatest(
+        voipPushCallId,
+        makeVoIPCall
+      )
+        .map { $0.0 }
+    )
       .sink { [weak self] id in self?.vcs.startCall(callId: id) }
       .store(in: &subscriptions)
   }
@@ -70,7 +77,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   func voipPushSimulationDidReceivePayload(_ payload: String) {
     guard let id = UUID(uuidString: payload) else { return }
-    voipPushCallId = payload
+    voipPushCallId.send(id)
     let upd = CXCallUpdate()
     upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
     provider?.reportNewIncomingCall(with: id, update: upd) { _ in }
@@ -80,7 +87,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   func provider(_: CXProvider, perform action: CXAnswerCallAction) {
     action.fulfill()
-    guard let id = voipPushCallId else { return }
-    makeVoIPCall.send(id)
+    makeVoIPCall.send()
   }
 }
