@@ -10,6 +10,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
   private var provider: CXProvider?
+  private let textCallId = PassthroughSubject<String, Never>()
   private let textField = UITextField()
   private var subscriptions = [AnyCancellable]()
   private var voipPushCallId: String?
@@ -27,6 +28,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     textField.frame = CGRect(x: 0, y: 300, width: b.width, height: 50)
     textField.borderStyle = .roundedRect
     view.addSubview(textField)
+    textField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
 
     // Кнопка совершения звонка.
     callButton.frame = CGRect(x: 0, y: 350, width: b.width, height: 50)
@@ -59,11 +61,17 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
       .store(in: &subscriptions)
   }
 
-  @objc func simulateIncomingCall(sender: UIButton) {
+  @objc func didChangeTextField(_: UITextField) {
+    guard let id = textField.text else { return }
+    textCallId.send(id)
+    /**/print("ИГР MyVC.didCTF: '\(id)'")
+  }
+
+  @objc func simulateIncomingCall(_: UIButton) {
     vps.simulate(payload: UUID().uuidString, after: .seconds(3))
   }
 
-  @objc func simulateOutgoingCall(sender: UIButton) {
+  @objc func simulateOutgoingCall(_: UIButton) {
     guard let id = textField.text else { return }
     makeUICall.send(id)
   }
