@@ -5,7 +5,7 @@ import UIKit
 class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProviderDelegate {
   private let callButton = UIButton()
   private let incomingButton = UIButton()
-  private let makeUICall = PassthroughSubject<String, Never>()
+  private let makeUICall = PassthroughSubject<Void, Never>()
   private let makeVoIPCall = PassthroughSubject<String, Never>()
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
@@ -56,7 +56,14 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     // Совершаем звонок разными способами:
     // 1. из UI
     // 2. в ответ на VoIP push
-    Publishers.Merge(makeUICall, makeVoIPCall)
+    Publishers.Merge(
+      Publishers.CombineLatest(
+        textCallId,
+        makeUICall
+      )
+        .map { $0.0 },
+      makeVoIPCall
+    )
       .sink { [weak self] id in self?.vcs.startCall(callId: id) }
       .store(in: &subscriptions)
   }
@@ -64,7 +71,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   @objc func didChangeTextField(_: UITextField) {
     guard let id = textField.text else { return }
     textCallId.send(id)
-    /**/print("ИГР MyVC.didCTF: '\(id)'")
   }
 
   @objc func simulateIncomingCall(_: UIButton) {
@@ -72,8 +78,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   }
 
   @objc func simulateOutgoingCall(_: UIButton) {
-    guard let id = textField.text else { return }
-    makeUICall.send(id)
+    makeUICall.send(())
   }
 
   func voipPushSimulationDidReceivePayload(_ payload: String) {
