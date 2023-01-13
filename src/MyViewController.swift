@@ -6,14 +6,14 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   private let callButton = UIButton()
   private let incomingButton = UIButton()
   private let makeUICall = PassthroughSubject<Void, Never>()
-  private let makeVoIPCall = PassthroughSubject<String, Never>()
+  private let makeVoIPCall = PassthroughSubject<Void, Never>()
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
   private var provider: CXProvider?
   private let textCallId = PassthroughSubject<String, Never>()
   private let textField = UITextField()
+  private let voipPushCallId = PassthroughSubject<String, Never>()
   private var subscriptions = [AnyCancellable]()
-  private var voipPushCallId: String?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -62,7 +62,11 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
         makeUICall
       )
         .map { $0.0 },
-      makeVoIPCall
+      Publishers.CombineLatest(
+        voipPushCallId,
+        makeVoIPCall
+      )
+        .map { $0.0 },
     )
       .sink { [weak self] id in self?.vcs.startCall(callId: id) }
       .store(in: &subscriptions)
@@ -83,7 +87,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   func voipPushSimulationDidReceivePayload(_ payload: String) {
     guard let id = UUID(uuidString: payload) else { return }
-    voipPushCallId = payload
+    voipPushCallId.send(payload)
     let upd = CXCallUpdate()
     upd.remoteHandle = CXHandle(type: .generic, value: "Wake up, Neo")
     provider?.reportNewIncomingCall(with: id, update: upd) { _ in }
@@ -93,7 +97,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
   func provider(_: CXProvider, perform action: CXAnswerCallAction) {
     action.fulfill()
-    guard let id = voipPushCallId else { return }
-    makeVoIPCall.send(id)
+    makeVoIPCall.send(())
   }
 }
