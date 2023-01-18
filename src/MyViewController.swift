@@ -58,10 +58,11 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     // 2. в ответ на VoIP push
     Publishers.Merge(
       Publishers.CombineLatest(
-        textCallId,
-        makeUICall
+        textCallId.map { ($0, Date()) },
+        makeUICall.map { ($0, Date()) }
       )
-        .map { $0.0 },
+        .filter { $0.0.1 > $0.0.0 }
+        .map { $0.0.0 },
       Publishers.CombineLatest(
         voipPushCallId,
         makeVoIPCall
