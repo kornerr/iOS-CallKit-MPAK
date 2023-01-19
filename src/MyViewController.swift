@@ -68,7 +68,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
         makeVoIPCall.map { ($0, Date()) }
       )
         .filter { $0.1.1 > $0.0.1 }
-        .map { $0.0 }
+        .map { $0.0.0 }
     )
       .sink { [weak self] id in self?.vcs.startCall(callId: id) }
       .store(in: &subscriptions)
