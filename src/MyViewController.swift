@@ -48,11 +48,11 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     vps.delegate = self
   }
 
-  @objc func simulateIncomingCall(sender: UIButton) {
+  @objc func simulateIncomingCall(_: UIButton) {
     vps.simulate(payload: UUID().uuidString, after: .seconds(3))
   }
 
-  @objc func simulateOutgoingCall(sender: UIButton) {
+  @objc func simulateOutgoingCall(_: UIButton) {
     guard let id = textField.text else { return }
     vcs.startCall(callId: id)
   }
