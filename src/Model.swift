@@ -1,8 +1,8 @@
 struct Model {
-  var textCallId: String?
-  var voipCallId: String?
   var isCallButtonPressed = false
   var isCallKitOKButtonPressed = false
+  var textCallId: String?
+  var voipCallId: String?
 }
 
 extension Model {
