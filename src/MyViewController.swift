@@ -56,6 +56,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     // Совершаем звонок разными способами:
     // 1. из UI
     // 2. в ответ на VoIP push
+    /*
     Publishers.Merge(
       Publishers.CombineLatest(
         textCallId.map { ($0, Date()) },
@@ -72,6 +73,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
     )
       .sink { [weak self] id in self?.vcs.startCall(callId: id) }
       .store(in: &subscriptions)
+    */
   }
 
   @objc func didChangeTextField(_: UITextField) {
