@@ -4,3 +4,4 @@ DIR=`dirname $0`
 
 cd $DIR/app
 xcodegen
+pod install

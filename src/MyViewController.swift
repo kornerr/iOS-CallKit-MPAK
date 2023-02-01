@@ -3,16 +3,16 @@ import Combine
 import UIKit
 
 class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProviderDelegate {
+  let makeUICall = PassthroughSubject<Void, Never>()
+  let makeVoIPCall = PassthroughSubject<Void, Never>()
+  let textCallId = PassthroughSubject<String, Never>()
+  let voipPushCallId = PassthroughSubject<String, Never>()
   private let callButton = UIButton()
   private let incomingButton = UIButton()
-  private let makeUICall = PassthroughSubject<Void, Never>()
-  private let makeVoIPCall = PassthroughSubject<Void, Never>()
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
   private var provider: CXProvider?
-  private let textCallId = PassthroughSubject<String, Never>()
   private let textField = UITextField()
-  private let voipPushCallId = PassthroughSubject<String, Never>()
   private var subscriptions = [AnyCancellable]()
 
   override func viewDidLoad() {

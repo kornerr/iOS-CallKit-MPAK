@@ -1,0 +1,8 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+platform :ios, '16.0'
+
+target 'Sample' do
+  use_frameworks!
+  pod 'MPAK', :path => '../mod/MPAK'
+end
