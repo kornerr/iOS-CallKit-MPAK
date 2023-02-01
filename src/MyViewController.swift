@@ -8,6 +8,7 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
   let textCallId = PassthroughSubject<String, Never>()
   let voipPushCallId = PassthroughSubject<String, Never>()
   private let callButton = UIButton()
+  private let ctrl = Controller()
   private let incomingButton = UIButton()
   private let vcs = VideoCallSimulation()
   private let vps = VoIPPushSimulation()
@@ -52,6 +53,8 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
     // Настраиваем получение пушей VoIP.
     vps.delegate = self
+
+    ctrl.setupCall(self)
 
     // Совершаем звонок разными способами:
     // 1. из UI
