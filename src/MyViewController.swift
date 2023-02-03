@@ -56,6 +56,12 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
 
     ctrl.setupCall(self)
 
+    // Совершаем звонок.
+    ctrl.m
+      .compactMap { $0.shouldMakeCall }
+      .sink { [weak self] id in self?.vcs.startCall(callId: id) }
+      .store(in: &subscriptions)
+
     // Совершаем звонок разными способами:
     // 1. из UI
     // 2. в ответ на VoIP push
