@@ -61,7 +61,6 @@ class MyViewController: UIViewController, VoIPPushSimulationDelegate, CXProvider
       .compactMap { $0.shouldMakeCall }
       .sink { [weak self] id in self?.vcs.startCall(callId: id) }
       .store(in: &subscriptions)
-
   }
 
   @objc func didChangeTextField(_: UITextField) {
