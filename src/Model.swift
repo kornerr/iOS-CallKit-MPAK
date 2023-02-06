@@ -12,14 +12,16 @@ extension Model {
   var shouldMakeCall: String? {
     if
       isCallButtonPressed,
-      let id = textCallId
+      let id = textCallId,
+      !id.isEmpty
     {
       return id
     }
 
     if
       isCallKitOKButtonPressed,
-      let id = voipCallId
+      let id = voipCallId,
+      !id.isEmpty
     {
       return id
     }
